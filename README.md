@@ -1,11 +1,12 @@
 ## Navigating Rifts in Human-LLM Grounding: Study and Benchmark
 
-This repository contains source code for the paper **Navigating Rifts in Human-LLM Grounding: Study and Benchmark** by [Omar Shaikh](https://oshaikh.com/), [Hussein Mozannar](https://husseinmozannar.github.io/), [Gagan Bansal](https://gagb.github.io/), [Adam Fourney](https://www.adamfourney.com/), and [Eric Horvitz](https://erichorvitz.com/)
+This repository contains source code for the paper **Navigating Rifts in Human-LLM Grounding: Study and Benchmark** (ACL 2025) by [Omar Shaikh](https://oshaikh.com/), [Hussein Mozannar](https://husseinmozannar.github.io/), [Gagan Bansal](https://gagb.github.io/), [Adam Fourney](https://www.adamfourney.com/), and [Eric Horvitz](https://erichorvitz.com/)
 
+This is not a software release, but source code to help in reproducibility of the paper.
 
 Feel free to reach out to [Omar Shaikh](https://oshaikh.com/) with any questions!
 
-[[Paper]](https://arxiv.org/)
+[[Paper]](https://arxiv.org/abs/2503.13975)
 
 **If you're here for the dataset, it's hosted on Hugging Face here!**
 [[Dataset]](https://huggingface.co/datasets/microsoft/rifts)
