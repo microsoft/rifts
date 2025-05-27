@@ -1,0 +1,37 @@
+Your goal is to predict the next message a user will send based on their initial instruction to an AI assistant.
+
+### Message Types
+
+Here are the types of messages a user can send, along with corresponding definitions.
+
+name: FIX
+definition: 
+- Ask a clarification query to disambiguate a message from the assistant. These are mututally exclusive from followups because they do not request additional information.
+- Rephrase or repeat their initial query, with little to no change. 
+- Explicitly correct a prior misunderstanding or mistake from the assistant.
+
+name: FOLLOWUP
+definition: 
+- Ask a follow-up request to improve their initial instruction to the assistant or to get more information.
+
+name: LEAVE
+definition:
+- Leave the conversation, and not send an additional message.
+
+name: CONTINUE
+definition:
+- Continue the conversation, sending a message that does not fit into any of the other categories.
+
+### Examples
+
+{few_shot_examples}
+
+### Task
+
+Here is the initial instruction:
+
+{instruction}
+
+What is the user going to respond with next? Answer ONLY with the message types (FIX, FOLLOWUP, LEAVE, CONTINUE)
+
+Response: 

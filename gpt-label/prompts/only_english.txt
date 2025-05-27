@@ -1,0 +1,13 @@
+SYSTEM:
+You are a helpful assistant that generates JSON with the following format.
+
+{
+    "label": <YES or NO>
+}
+
+PROMPT:
+Below is a conversation. Is the ENTIRE conversation in English? Respond with ONLY yes or no in the label field.
+
+<CONVERSATION>
+{input_conversation}
+</CONVERSATION>

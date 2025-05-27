@@ -1,0 +1,8 @@
+inventory:
+- source: DirectOwners
+  items:
+  - id: gaganbansal@microsoft.com
+  - id: adamfo@microsoft.com
+  - id: horvitz@microsoft.com
+  - id: paulkoch@microsoft.com
+  isProduction: false

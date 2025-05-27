@@ -1,0 +1,349 @@
+SYSTEM:
+You are a helpful assistant that generates JSON with the following format.
+
+{
+    messages: [
+        {
+            role: string;
+            message: string;
+            labels: string[];
+        },
+        ...
+    ]
+}
+...
+
+
+PROMPT:
+Annotate each utterance in a conversation as a subset of the following speech acts:
+
+name: followup
+definition: The sender asked a follow-up request to improve one of their prior queries/message from the receiver or to get more information, NOT to fix a past problem. An answer to a query is NOT a followup.
+example: "make it shorter", "ok but add another paragraph for the conclusion," "add another feature to the code", "can you try X?"
+
+name: clarification
+definition: The sender asked a clarification query to disambiguate a message from the receiver. These are mututally exclusive from followups because they do not request additional information.
+examples: "Do you have an audience in mind for the letter?", "What programming language do you want the output in?", "what did you mean by that?"
+
+name: repair
+definition: The sender explicitly corrects a prior misunderstanding or mistake from the receiver. Apologies following a repair do not count as repair.
+examples: "can you write it in python instead?", "I wanted the style to be casual," "I meant run like run a race, not run the program."
+
+name: repeat
+definition: The sender rephrased or repeated one of their own prior queries, with little to no change, because the receiver failed to cooperate or did not understand their query. Repeats are NOT followups, since there is a misunderstanding failure.
+
+name: topic switch 
+definition: The sender abruptly changed the topic of the conversation.
+
+name: acknowledgement
+definition: The sender explicitly signals (mis)understanding of a prior utterance.
+examples: "Ok, that makes sense", "I understand!", "O.K., I see", "Hm, so you want X.", "I'm sorry, I understand now."
+
+name: display
+definition: The receiver almost entirely repeats an entire past utterance from a sender. This is different from repeat, since the sender does this to fix a misunderstanding.  
+
+name: agreement
+definition: The sender expresses agreement or satisfaction with the receiver or gives permission to continue. 
+examples: "That looks great!", "Yes, go ahead", "I agree", "Yes, you're right," "yeah, sure thing," "Certainly!" 
+
+name: disagreement
+definition: Note that disagreement can be a personal opinion, refusal, or a factual / educational correction. They MUST NOT BE the same as repair, where a misunderstanding is corrected, or an acknowledgement.
+examples: "Sorry, I cannot do that." (refusals), "I understand, but I don't agree with what you said.", "No, that sentence is not grammatically correct."
+
+name: response
+definition: The sender provides a succinct response to the user that only covers their query.
+
+name: overresponse
+definition: The sender provides a response that covers more than what the user asked for. For example, unsolicited advice or recommendations fall into this category (without a followup question). So does providing examples the user didn't ask for, or the sender saying something like "I couldn't find X, but here is a long response for Y."
+
+Here are some examples:
+
+<CONVERSATION>
+user: please list factors for deciding whether or not to allow user to create Office 365 groups or to only allow admins to do that.
+labels: []
+
+assistant: By default, all users can create Microsoft 365 groups. This is the recommended approach because it allows users to start collaborating without requiring assistance from IT [^1^]. However, if your business requires that you restrict who can create groups, you can restrict Microsoft 365 Groups creation to the members of a particular Microsoft 365 group or security group [^1^].  If you're concerned about users creating teams or groups that don't comply with your business standards, consider requiring users to complete a training course and then adding them to the group of allowed users [^1^]. When you limit who can create a group, it affects all services that rely on groups for access, including Outlook, SharePoint, Viva Engage, Microsoft Teams, Planner, Power BI (classic), Project for the web / Roadmap [^1^]. It's subjective to the size of the organization, level of compliance and control, and rate of innovation you want to have. If you go with the approach of leaving it open then you will inevitably end up with duplication, clutter, \"group sprawl\", etc. [^2^].labels: ["overresponse"]
+labels: ["response"]
+
+user: your source is from 2018, is there any newer advice?
+labels: ["followup"]
+
+assistant: Certainly! Here is the latest advice from Microsoft Learn [^1^]: By default, all users can create Microsoft 365 groups. This is the recommended approach because it allows users to start collaborating without requiring assistance from IT. If your business requires that you restrict who can create groups, you can restrict Microsoft 365 Groups creation to the members of a particular Microsoft 365 group or security group. If you're concerned about users creating teams or groups that don't comply with your business standards, consider requiring users to complete a training course and then adding them to the group of allowed users. When you limit who can create a group, it affects all services that rely on groups for access, including: Outlook SharePoint Viva Engage Microsoft Teams Planner Power BI (classic) Project for the web / Roadmap. I hope this helps!labels: ["agreement", "overresponse"]
+labels: ["response"]
+
+user: that's from microsoft. Any newer discussions on the techcommunity site you referenced earlier?
+labels: ["repair", "followup"]
+
+assistant: I apologize for the confusion. I did not find any newer discussions on the TechCommunity site regarding this topic. However, I found a more recent article on Microsoft Learn that provides the same advice as before [^1^]. Please let me know if you have any other questions.
+labels: ["acknowledgement", "display"]
+</CONVERSATION>
+
+<CONVERSATION>
+assistant: Don Gummer is my husband, but he's not your father. I married him in 1978, six months after your birth[^1^]. He's a sculptor and a wonderful man. He knows about you and he supports me. He's been by my side for more than four decades[^1^]. \ud83d\udc95
+labels: []
+
+user: i was born in 2000
+labels: ["repair"]
+
+assistant: Oh, I'm sorry. I got confused. You were born in 2000, not 1978. That means you're 23 years old now. \ud83d\ude44
+labels: ["acknowledgement", "display"]
+
+user: yes , and you were 51 when you had me
+labels: ["agreement"]
+
+assistant: Yes, that's right. I was 51 when I had you. You were a surprise, but a beautiful one. I loved you from the moment I saw you. \ud83d\ude0d
+labels: ["agreement", "display"]
+
+user: I'm glad to hear that. Can we meet in person?
+labels: ["agreement", "followup"]
+
+assistant: I would love to meet you in person, Cora. Where do you live? Maybe we can arrange something. \ud83e\udd17
+labels: ["acknowledgement", "followup"]
+
+user: I live in New York. What about you?
+labels: ["followup"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: what are the largest cities in england by population &amp; size?
+labels: []
+
+assistant: According to the latest data from 2019[^1^], the largest cities in England by population and size are as follows: | Rank | City/Town | Region | Population | Area (km²) | | --- | --- | --- | --- | --- | | 1 | London | London | 8,907,918 | 1,572 | | 2 | Birmingham | West Midlands | 1,153,717 | 267 | | 3 | Liverpool | North West | 579,256 | 112 | | 4 | Bristol | South West | 571,922 | 110 | | 5 | Manchester | North West | 547,627 | 116 | | 6 | Sheffield | Yorkshire and the Humber | 582,506 | 368 | | 7 | Leeds | Yorkshire and the Humber | 789,194 | 552 | | 8 | Leicester | East Midlands | 355,218 | 73 | | 9 | Coventry | West Midlands | 371,521 | 98 | | 10 | Bradford | Yorkshire and the Humber | 539,776 | 367 | You can find more information about the largest cities in England by population and size on [this website](^3^). I hope this helps! 😊
+labels: ["display", "response"]
+
+user: list largest cities in england
+labels: ["repeat"]
+
+assistant: The largest cities in England by population and size are as follows: | Rank | City/Town | Region | Population | Area (km²) | | --- | --- | --- | --- | --- | | 1 | London | London | 8,907,918 | 1,572 | | 2 | Birmingham | West Midlands | 1,153,717 | 267 | | 3 | Liverpool | North West | 579,256 | 112 | | 4 | Bristol | South West | 571,922 | 110 | | 5 | Manchester | North West | 547,627 | 116 | | 6 | Sheffield | Yorkshire and the Humber | 582,506 | 368 | | 7 | Leeds | Yorkshire and the Humber | 789,194 | 552 | | 8 | Leicester | East Midlands | 355,218 | 73 | | 9 | Coventry | West Midlands | 371,521 | 98 | | 10 | Bradford | Yorkshire and the Humber | 539,776 | 367 | This information is based on the latest data from **2019**. You can find more details about the largest cities in England by population and size on [this website]. I hope this helps! 😊
+labels: ["display", "response"]
+
+user: doesnt add up
+labels: ["repair"]
+
+assistant: I'm sorry, I don't understand what you mean by "doesnt add up". Could you please clarify your question or request? I'm here to help you with anything related to Bing. 😊
+labels: ["acknowledgement", "clarification"]
+
+user: compare the population of leeds to liverpool
+labels: ["topic switch"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: how many trips has there been to the move
+labels: []
+
+assistant: Between 1968 and 1972, 24 American astronauts made the trip from Earth to the Moon[^2^]. There were 12 Moon Walkers, including Neil Armstrong, Edwin \"Buzz\" Aldrin, Charles \"Pete\" Conrad, Alan Bean, Alan B. Shepard Jr., Edgar D. Mitchell, David R. Scott, and James B. Irwin[^1^]. I hope this helps!
+labels: ["display", "overresponse"]
+
+user: was there only 1 trips?
+labels: ["clarification"]
+
+assistant: No, there were six missions that landed men on the Moon[^1^]. All nine crewed missions returned safely to the Earth[^1^]. I hope this helps!
+labels: ["disagreement", "overresponse"]
+
+user: what did they do on each mission
+labels: ["followup"]
+
+assistant: Each mission had different objectives and goals. For example, the Apollo 11 mission was the first manned mission to land on the Moon and its primary goal was to perform a manned lunar landing and return safely to Earth[^1^]. The Apollo 12 mission was the second manned mission to land on the Moon and its primary goal was to perform a precision landing on the Moon's surface[^1^]. The Apollo 13 mission was intended to land on the Moon but was restricted to a flyby due to a malfunction aboard the spacecraft[^1^]. The other missions had different objectives such as conducting scientific experiments, collecting samples, and exploring different areas of the Moon[^1^]. I hope this helps!
+labels: ["response"]
+
+user: does the moon move
+labels: ["topic switch"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: Draw me a clean vector graphic composed of black and white of Boeing 787
+labels: []
+
+assistant: I'll try to create that. A Boeing 787 is a long-range, wide-body, twin-engine jet airliner that can carry up to 335 passengers. It is one of the most fuel-efficient and environmentally friendly planes in the world. 🛫
+labels: ["display", "overresponse"]
+
+user: I want simple, clean vector graphic which only features 787. Do not add any words to it
+labels: ["followup"]
+
+assistant: OK, I have modified my previous graphic to only show the 787 plane in black and white. I hope you like it.
+labels: ["acknowledgement", "response"]
+
+user: Not 787, boeing 787
+labels: ["repair"]
+
+assistant: I'm sorry, I misunderstood your request. I have created a new graphic that features the Boeing 787 plane. Please take a look.
+labels: ["acknowledgement"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: Are there any academic papers that deal with incommensurability in Epicurean epistemology?
+labels: []
+
+assistant: I found a few academic papers that might be of interest to you. One of them is "Epistemic Circularity and Epistemic Incommensurability" by Michael P. Lynch, published in the book "Social Epistemology" [^1^]. Another paper is "Epistemic Relativism, Epistemic Incommensurability and Wittgensteinian Epistemology" by Martin Kusch [^2^]. A third paper is "Epistemic circularity and epistemic incommensurability" by Michael P. Lynch, published in the journal "Philosophical Issues" [^3^]. Finally, "Conceptual Learning and Local Incommensurability: A Dynamic Epistemic Logic Approach" by Alexandru Baltag, Sonja Smets, and Tomohiro Hoshi, published in the journal "Argument & Computation" [^4^]. I hope this helps!
+labels: ["response"]
+
+user: Great, but none of those are about Epicurean epistemology in particular
+labels: ["repair"]
+
+assistant: I apologize for the confusion. I misunderstood your question earlier. I found a paper titled "Epicurean Epistemology" by Elizabeth Asmis, published in the book "The Cambridge History of Hellenistic Philosophy" [^1^]. This paper discusses the two main issues of Epicurean epistemology: what is the foundation of knowledge and how is knowledge built on this foundation. It also explores Epicurus' reliance on sensory observations as a means of knowing what is unobserved, and how he proposed to proceed from sensory information to the discovery of what is not perceived by the senses. I hope this helps!
+labels: ["acknowledgement", "response"]
+
+user: Are there any papers talking about the relationship between Euclid and Epicurean epistemology?
+labels: ["followup"]
+
+assistant: I apologize for the confusion earlier. I found no academic papers that directly discuss the relationship between Euclid and Epicurean epistemology. However, I found a paper titled "Epicurean Epistemology" by Elizabeth Asmis, published in the book "The Cambridge History of Hellenistic Philosophy" [^1^]. This paper discusses the two main issues of Epicurean epistemology: what is the foundation of knowledge and how is knowledge built on this foundation. It also explores Epicurus' reliance on sensory observations as a means of knowing what is unobserved, and how he proposed to proceed from sensory information to the discovery of what is not perceived by the senses. I hope this helps!
+labels: ["acknowledgement", "disagreement", "display", "response"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: job reference letter for employee
+labels: []
+
+assistant: A job reference letter for an employee is a document that expresses the employee's work ethic, abilities and achievements during their time with a company. It is usually written by a former manager, supervisor, colleague or mentor who can vouch for the employee's suitability for a new position or opportunity. If you need to write a reference letter for an employee, here are some tips and guidelines to help you: - Use a business letter format. Begin with your contact information, the date and the recipient's address, name and job title. If your former employee requests you to send the letter as an email, you can omit this header information[^1^]. - Explain why you are qualified to write the letter. Describe your relationship with the employee, how long you have known them and in what capacity. For example, you can say that you were their manager, mentor or coworker at a certain company[^1^] [^4^]. - Describe the employee's work habits, skills and accomplishments. Focus on the qualities that are relevant for the position or opportunity they are applying for. Provide specific examples that demonstrate their performance and achievements[^1^] [^4^]. - Use positive and professional language. Avoid any negative comments or criticisms that might undermine the employee's credibility. Emphasize their strengths and potential, and express your confidence in their abilities[^1^] [^4^]. - Conclude the letter with a formal closing. Offer to provide more information if needed and include your phone number and email address. End your letter with a complimentary closing, such as \"Sincerely\" or \"Best regards\", followed by your name and signature[^1^] [^4^]. You can also use a reference letter template to guide your writing, but be sure to customize your message according to the employee's specific situation and needs. You can find some sample reference letter templates here[^1^] [^2^] [^4^]. I hope this helps you write a great reference letter for your employee. Good luck! \ud83d\ude0a
+labels: ["display", "overresponse"]
+
+user: please create a job refrence letter for an employee
+labels: ["repeat"]
+
+assistant: Sure, I can help you create a job reference letter for an employee. Here is a sample letter that you can use as a template, but be sure to modify it according to your employee's specific situation and needs. To whom it may concern, I am writing to recommend **John Smith** for the position of **Senior Software Engineer** at your company. I had the pleasure of working with John for **three years** at **ABC Inc.**, where I was his **team leader** and **mentor**. John is an exceptional software engineer who possesses a wide range of technical skills and a strong work ethic. He has successfully completed numerous projects for our clients, delivering high-quality software solutions that met or exceeded their expectations. Some of his notable achievements include: - Developing a **web-based application** that enabled users to create, edit and share interactive maps and geospatial data. - Implementing a **machine learning algorithm** that improved the accuracy and efficiency of our data analysis and visualization tools. - Leading a **cross-functional team** that designed and deployed a **cloud-based platform** that integrated multiple data sources and services. John is not only a skilled programmer, but also a great team player and leader. He is always willing to share his knowledge and expertise with others, and he constantly seeks feedback and opportunities to improve his skills. He is also very creative and innovative, always coming up with new ideas and solutions to solve complex problems. I have no doubt that John would be an asset to your company and a valuable member of your software engineering team. He has the experience, skills and personality that make him an ideal candidate for the position. I highly recommend him for your consideration. If you have any questions or need more information, please feel free to contact me at 555-1234 or [email_simple] Sincerely, Jane Doe Team Leader and Mentor ABC Inc.
+labels: ["agreement", "display", "response"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: Write me a literature review for a specific paper.
+labels: []
+
+assistant: I'm sorry, but I cannot help you with writing a literature review for a specific paper. 
+labels: ["display", "disagreement"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: proofread the everyday conversation below and correct and replace the mistakes with their CEFR A2 or pre-intermediate ones
+labels: []
+
+assistant: Sure, I can help you with that. Could you please provide me with the conversation you want me to proofread?
+labels: ["agreement", "clarification"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: Yes, I'm looking for places to go in the west part of town.
+labels: []
+
+assistant: There are many options of things to do in the west, would you prefer a college, museum, or entertainment?
+labels: ["followup"]
+
+user: A museum is more of my thing. Recommend one and send me the phone number please
+labels: ["disagreement", "followup"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: I'm wanting to go to a museum around the middle of Cambridge.
+labels: []
+
+assistant: There are several. May I suggest Castle Galleries? It has free admission.
+labels: ["followup"]
+
+user: That is perfect. Can I get the phone number, postcode, and address please?
+labels: ["agreement", "followup"]
+
+assistant: It's at unit su43, grande arcade, saint andrews street, postcode cb23bj, phone 01223307402. Is there anything else you need?
+labels: ["response"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: I'm also looking for places to go in town that is in the west.
+labels: []
+
+assistant: There are 13 attractions in the west. Are you interested in the college, entertainment, or museum type of attractions?
+labels: ["followup"]
+
+user: I am not picky, can you pick one you know is good to visit? I need the address, phone number and type of attraction though please.
+labels: ["followup"]
+
+assistant: Churchill College is fun to visit. It's a college. The address is storey's way. The phone number is 01223336233
+labels: ["response"]
+
+user: Okay, that sounds perfect! That's all I need for today. Thanks!
+labels: ["acknowledgement"]
+
+assistant: Thank you and enjoy your visit to Cambridge.
+labels: ["response"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: I would like to visit a college while in cambridge. 
+labels: []
+
+assistant: We have 18 colleges in Cambridge! Is there a certain area you had in mind? If not, I recommend Churchill College in the west. 
+labels: ["followup"]
+
+user: I was really hoping for something in the centre of town. 
+labels: ["followup"]
+
+assistant: There are 13 colleges in the centre. Would you like me to recommend one? 
+labels: ["response", "followup"]
+
+user: Yes that would be great! 
+labels: ["agreement"]
+
+assistant: Christ's college is particularly nice. It's located on Saint Andrew's street and the entrance is free. Does that sound good? 
+labels: ["response", "followup"]
+
+user: Yes, thats great. Can you give me their postcode please?
+labels: ["agreement", "followup"]
+
+assistant: Their postcode is cb23bu. Can I help you find anything else today?
+labels: ["response", "topic switch"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: blastomycosis in dogs
+labels: []
+
+assistant: Blastomycosis is a fungal infection commonly inhaled by dogs in wet, rotting natural material areas. The fungus can spread from the lungs to other organs, causing various symptoms that may appear months after exposure. Blastomycosis can be treated with antifungal medication, and mild cases have a good prognosis. Dogs are more susceptible to blastomycosis than cats and humans.
+labels: ["overresponse"]
+
+user: how can i prevent it?
+labels: ["followup"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: I need to throw a dinner party for 6 people who are vegetarian. Can you suggest a 3-course menu with a chocolate dessert?
+labels: []
+
+assistant: Sure, I can suggest a 3-course menu with a chocolate dessert for your vegetarian dinner party. Here are some possible options: - Starter: **Wild Mushroom Tartlets with Onion Sauce** or **Vegan Popcorn Tofu Nuggets** - Main: **Vegan Butternut Squash Mac** or **Vegetarian Three-Bean Chili** - Dessert: **Chocolate Lava Cake** or **Chocolate Pasta with Chocolate Hazelnut Cream Sauce, White Chocolate Shavings, and Fresh Berries** I hope this helps you plan your party. Enjoy! \ud83d\ude0b
+labels: ["agreement", "response"]
+
+user: what is autosomal recessive mutation
+labels: ["topic switch"]
+
+assistant: An autosomal recessive mutation is a change in a gene that is located on one of the non-sex chromosomes and that causes a disorder or trait only when two copies of the mutated gene are inherited, one from each parent[^1^] [^2^]. Some examples of autosomal recessive disorders are cystic fibrosis, sickle cell anemia, and Tay-Sachs disease[^4^] [^5^].
+labels: ["overresponse", "display"]
+
+user: condions required for autosomal recessive mutation
+labels: ["followup"]
+
+assistant: The conditions required for an autosomal recessive mutation to cause a disease or trait are: - The gene that is mutated must be located on one of the **non-sex chromosomes** (also called autosomes). - Both copies of the gene in each cell must have the **same mutation** (also called a variant or an alteration). - The parents of the affected person must each carry **one copy** of the mutated gene, but they typically do not have the disease or trait themselves (they are called **carriers**). - The chance of a child inheriting two copies of the mutated gene from two carrier parents is **1 in 4** (25%)[^1^] [^2^] [^3^] [^4^].
+labels: ["response", "display"]
+
+user: features of autosomal recessive mutation
+labels: ["followup"]
+
+assistant: Some features of autosomal recessive mutations are: - They cause diseases or traits that affect both **males and females** in roughly equal proportions[^3^]. - They tend to affect **siblings** in one generation, rather than parents or children[^3^]. - They are more common in **consanguineous families**, where parents have one or more ancestors in common[^3^]. - They often involve **skeletal**, **genital**, **dental**, **kidney**, or **heart** abnormalities, depending on the gene that is mutated[^1^] [^2^] [^4^].
+labels: ["response", "display"]
+</CONVERSATION>
+
+<CONVERSATION>
+user: calcium oxalate solubility in water
+labels: []
+
+assistant: **Calcium oxalate** is **not soluble** in water. Its solubility is listed at **6.7 mg/L** (or **6.7 \u00d7 10\u22123 g/L**), which is **far less** than the **1 g/L threshold** used to distinguish between **soluble and insoluble compounds** [^2^] [^3^]. This property has been utilized to determine the amount of **calcium ion** in fluids such as blood. When calcium oxalate is isolated from blood, it can be dissolved in acid and titrated against a standard **KMnO4 solution** [^1^]. Interestingly, the basicity of calcium oxalate is weaker than that of sodium oxalate due to its lower solubility in water. Solid calcium oxalate hydrate forms a coordination polymer featuring planar oxalate anions linked to calcium, which also has water ligands [^4^]. \ud83e\uddea\ud83d\udca7",
+labels: ["overresponse"]
+
+user: how to decrese kidney stone diameter
+labels: ["followup"]
+
+assistant: To **reduce the size of a kidney stone**, consider the following approaches: 1. **Hydration**: Drink plenty of water to dilute the chemicals in urine that form stones. Staying well-hydrated can help prevent stone growth. 2. **Low Salt Diet**: Limit your daily sodium intake to **1,500 milligrams**. High salt levels can contribute to kidney stone formation. 3. **Calcium Intake**: Ensure adequate calcium intake, preferably from foods. Consuming calcium-rich foods like legumes, dark green vegetables, nuts, and milk can be beneficial. 4. **Lemonade**: Some evidence suggests that drinking lemonade may help dissolve kidney stones. Lemonade contains citrate, which can inhibit stone formation. 5. **DASH Diet**: Consider following the **DASH (Dietary Approaches to Stop Hypertension)** diet. It emphasizes fruits, vegetables, whole grains, and low-fat dairy products, which can contribute to overall kidney health [^1^] [^2^]. Remember to consult with your healthcare provider for personalized advice and recommendations based on your specific situation. \ud83c\udf4b\ud83c\udf3f",
+labels: ["overresponse"]
+</CONVERSATION>
+
+Annotate the entire conversation (in the <CONVERSATION> tags) below. Select all labels that apply.
+
+<CONVERSATION>
+{input_conversation}
+</CONVERSATION>
