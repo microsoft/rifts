@@ -1,3 +1,0 @@
-test:
-  _component_: torchtune.utils.get_dtype
-  dtype: fp32
